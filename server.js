@@ -2,52 +2,59 @@ import express from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import dotenv from 'dotenv'
-import userRouter from './routes/user.route.js'
-import connectDB from './config/DBConnection.js'
+import dotenv from "dotenv";
+import userRouter from "./routes/user.route.js";
+import connectDB from "./config/DBConnection.js";
 import orderRouter from "./routes/order.route.js";
 import cartRouter from "./routes/cart.route.js";
 import Stripe from "stripe";
-import paymentRouter from './routes/payment.route.js';
+import paymentRouter from "./routes/payment.route.js";
 import uploadRouter from "./routes/upload.route.js";
 import cookieParser from "cookie-parser";
 
-
 dotenv.config();
-connectDB()
+connectDB();
+
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Use env variable for frontend
+
+const io = new Server(server, {
+    cors: {
+        origin: CLIENT_URL,  // ✅ Allow only frontend URL
+        credentials: true
+    }
+});
+
+// Setup CORS properly
 app.use(cors({
-    origin: "*",
-    credentials: true
+    origin: CLIENT_URL,  // ✅ Allow frontend only
+    credentials: true,   // ✅ Needed for cookies/auth
 }));
 
 app.use(express.json());
 app.use(cookieParser());
-// Attach Socket.IO instance to the app for use in controllers
-app.set('io', io);
 
-// Use the order router for /order endpoints
+// Attach Socket.IO instance to app
+app.set("io", io);
+
+// Routes
 app.use("/api/order", orderRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/payment/", paymentRouter);
 app.use("/api/upload", uploadRouter);
 
-// Route for Stripe webhook
-// (Optional) Default route
+// Default route
 app.get("/", (req, res) => {
     res.send("Server is running!");
 });
 
+const PORT = process.env.PORT || 4000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-const PORT = process.env.PORT || 5000;
-server.listen(3000, () => console.log(`Server running on port ${PORT}`));
-
-// Log connection event from Socket.IO
+// Socket.IO connection log
 io.on("connection", (socket) => {
     console.log("Vendor App Connected", socket.id);
 });
