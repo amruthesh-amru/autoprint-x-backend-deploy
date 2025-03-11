@@ -63,9 +63,9 @@ const registerUser = async (req, res) => {
 
         // ✅ Set token in HTTP-only cookie
         res.cookie("token", token, {
-            httpOnly: false, // Prevents access via JavaScript
-            secure: false, // Ensures HTTPS in production
-            sameSite: "Lax", // Protects against CSRF
+            httpOnly: true,  // ✅ Prevents JavaScript access (security)
+            secure: process.env.NODE_ENV === "production",  // ✅ Only send cookies over HTTPS in production
+            sameSite: "None",  // ✅ Required for cross-origin authentication
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
         });
 
@@ -96,14 +96,13 @@ const loginUser = async (req, res) => {
         const token = await createToken(user._id);
         console.log(token);
 
-        // ✅ Set token in HTTP-only cookie
+        // ✅ Secure Token in HTTP-only Cookie
         res.cookie("token", token, {
-            httpOnly: false, // Prevents access via JavaScript
-            secure: false, // Ensures HTTPS in production
-            sameSite: "Lax", // Protects against CSRF
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "None",
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
         });
-
 
         return res.status(200).json({ success: true, message: "Logged in successfully!", userId: user._id, role: user.role, email: user.email });
     } catch (error) {
@@ -112,19 +111,26 @@ const loginUser = async (req, res) => {
     }
 };
 
+
 const logoutUser = (req, res) => {
     try {
-        res.clearCookie("token"); // Clears the cookie
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "None",
+        });
         return res.status(200).json({ success: true, message: "Logged out successfully" });
     } catch (error) {
-        return res.status(500).json({ success: false, message: "unable to logout" })
+        return res.status(500).json({ success: false, message: "Unable to logout" });
     }
 };
+
 const checkAuth = (req, res) => {
     if (req.cookies.token) {
         return res.status(200).json({ isAuthenticated: true });
     }
     return res.status(401).json({ isAuthenticated: false });
 };
+
 
 export { registerUser, loginUser, logoutUser, checkAuth };
