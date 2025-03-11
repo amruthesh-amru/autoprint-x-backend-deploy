@@ -20,12 +20,11 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-app.use(
-    cors({
-        origin: "http://localhost:5173", // ✅ Allow your frontend
-        credentials: true, // ✅ Allow cookies
-    })
-);
+app.use(cors({
+    origin: "*",
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 // Attach Socket.IO instance to the app for use in controllers
