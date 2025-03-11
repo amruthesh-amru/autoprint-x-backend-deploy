@@ -63,11 +63,12 @@ const registerUser = async (req, res) => {
 
         // ✅ Set token in HTTP-only cookie
         res.cookie("token", token, {
-            httpOnly: true,  // ✅ Prevents JavaScript access (security)
-            secure: process.env.NODE_ENV === "production",  // ✅ Only send cookies over HTTPS in production
-            sameSite: "Lax",  // ✅ Required for cross-origin authentication
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",  // Ensure HTTPS in production
+            sameSite: "None",       // Use "None" for cross-site requests
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
         });
+
 
         return res.status(201).json({ success: true, message: "User registered successfully", userId: user._id, role: user.role });
     } catch (error) {
@@ -96,11 +97,10 @@ const loginUser = async (req, res) => {
         const token = await createToken(user._id);
         console.log(token);
 
-        // ✅ Secure Token in HTTP-only Cookie
         res.cookie("token", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
+            secure: process.env.NODE_ENV === "production",  // Ensure HTTPS in production
+            sameSite: "None",       // Use "None" for cross-site requests
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
         });
 
