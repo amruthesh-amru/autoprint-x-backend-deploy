@@ -65,7 +65,7 @@ const registerUser = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,  // ✅ Prevents JavaScript access (security)
             secure: process.env.NODE_ENV === "production",  // ✅ Only send cookies over HTTPS in production
-            sameSite: "None",  // ✅ Required for cross-origin authentication
+            sameSite: "Lax",  // ✅ Required for cross-origin authentication
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days expiration
         });
 
