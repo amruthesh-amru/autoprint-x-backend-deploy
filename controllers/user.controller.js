@@ -125,12 +125,16 @@ const logoutUser = (req, res) => {
     }
 };
 
+// In your auth controller
 const checkAuth = (req, res) => {
-    if (req.cookies.token) {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ isAuthenticated: false });
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) return res.status(401).json({ isAuthenticated: false });
         return res.status(200).json({ isAuthenticated: true });
-    }
-    return res.status(401).json({ isAuthenticated: false });
+    });
 };
+
 
 
 export { registerUser, loginUser, logoutUser, checkAuth };
