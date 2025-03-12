@@ -24,8 +24,10 @@ export const createCheckoutSession = async (req, res) => {
                 },
             ],
             mode: 'payment',
-            success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: "http://localhost:5173/cancel",
+            // success_url: `http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}`,
+            // cancel_url: "http://localhost:5173/cancel",
+            success_url: `https://autoprint-x-frontend-deploy.onrender.com/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: "https://autoprint-x-frontend-deploy.onrender.com/cancel",
         });
 
         res.json({ sessionId: session.id });
