@@ -18,11 +18,11 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // Use env variable for frontend
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 const io = new Server(server, {
     cors: {
-        origin: CLIENT_URL,  // ✅ Allow only frontend URL
+        origin: CLIENT_URL,
         credentials: true
     }
 });

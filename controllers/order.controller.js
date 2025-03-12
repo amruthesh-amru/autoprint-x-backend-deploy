@@ -1,6 +1,5 @@
 
 import dotenv from "dotenv";
-import Order from "../models/order.model.js";
 import orderModel from "../models/order.model.js";
 import userModel from "../models/user.model.js";
 
@@ -66,9 +65,14 @@ export async function processOrder(req, res) {
 
         const savedOrder = await newOrder.save();
 
-        // Emit event to connected vendors (if using Socket.IO)
+        onsole.log("📡 Emitting new order:", savedOrder);
         const io = req.app.get("io");
-        if (io) io.emit("new-order", savedOrder);
+        if (io) {
+            io.emit("new-order", savedOrder);
+            console.log("✅ Order event emitted!");
+        } else {
+            console.log("⚠️ io instance not found");
+        }
 
         res.status(201).json({ message: "Order placed successfully", order: savedOrder });
     } catch (error) {
