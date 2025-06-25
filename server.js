@@ -47,14 +47,13 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-// For Vercel deployment, export the app instead of listening to port
-if (process.env.NODE_ENV !== 'production') {
-    server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-}
-
-export default app;
+// For traditional server deployment (not serverless)
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Log connection event from Socket.IO
 io.on("connection", (socket) => {
     console.log("Vendor App Connected", socket.id);
 });
+
+export default server;
+
