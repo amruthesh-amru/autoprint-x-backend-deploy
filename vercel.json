@@ -1,4 +1,5 @@
 {
+  "name": "autoprint-x-backend-api",
   "version": 2,
   "builds": [
     {
