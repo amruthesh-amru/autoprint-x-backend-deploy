@@ -24,17 +24,16 @@ app.use(
     cors({
         origin: [
             "http://localhost:5173", // Local development
-            process.env.FRONTEND_URL // Additional frontend URL from env
-        ].filter(Boolean), // Remove any undefined values
-        credentials: true, // ✅ Allow cookies
+            process.env.FRONTEND_URL,
+            "https://autoprint-x-frontend-deploy.onrender.com",
+        ].filter(Boolean),
+        credentials: true,
     })
 );
 app.use(express.json());
 app.use(cookieParser());
-// Attach Socket.IO instance to the app for use in controllers
 app.set('io', io);
 
-// Use the order router for /order endpoints
 app.use("/api/order", orderRouter);
 app.use("/api/user", userRouter);
 app.use("/api/cart", cartRouter);
@@ -45,6 +44,7 @@ app.use("/api/upload", uploadRouter);
 // (Optional) Default route
 app.get("/", (req, res) => {
     res.send("Server is running!");
+
 });
 
 
