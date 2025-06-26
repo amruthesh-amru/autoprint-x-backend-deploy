@@ -24,9 +24,9 @@ app.use(
     cors({
         origin: [
             "http://localhost:5173",
+            "http://localhost:5174",
             process.env.FRONTEND_URL,
             "https://autoprint-x-frontend-deploy.onrender.com",
-            // Add this specific URL for your Electron app
             "autoprint-electron://app"
         ].filter(Boolean),
         credentials: true,
