@@ -22,18 +22,19 @@ const io = new Server(server, { cors: { origin: "*" } });
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 app.use(
     cors({
-        origin: [
-            "http://localhost:5173",
-            "http://localhost:5174",
-            process.env.FRONTEND_URL,
-            "https://autoprint-x-frontend-deploy.onrender.com",
-            "autoprint-electron://app"
-        ].filter(Boolean),
+        origin: true, // Allow all origins during development
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        optionsSuccessStatus: 200 // For legacy browser support
     })
 );
 app.use(express.json());
 app.use(cookieParser());
+
+// Handle preflight requests
+app.options('*', cors());
+
 app.set('io', io);
 
 app.use("/api/order", orderRouter);
